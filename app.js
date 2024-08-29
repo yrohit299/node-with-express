@@ -11,20 +11,17 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// GET - api/v1/movies
-app.get('/api/v1/movies', (req, res) => {
+const getMovies = (req, res) => {
   res.status(200).json({
     status: 'success',
     data: {
       movies: movies,
     },
   });
-});
+};
 
-// GET - api/v1/movies/id
-app.get('/api/v1/movies/:id', (req, res) => {
+const getMovie = (req, res) => {
   const id = +req.params.id;
-
   const movie = movies.find((movie) => movie.id === id);
   console.log(movie);
 
@@ -41,10 +38,9 @@ app.get('/api/v1/movies/:id', (req, res) => {
       movie: movie,
     },
   });
-});
+};
 
-// POST - api/v1/movies
-app.post('/api/v1/movies', (req, res) => {
+const createMovie = (req, res) => {
   const newId = movies.length + 1;
   const newMovie = { id: newId, ...req.body };
 
@@ -57,10 +53,9 @@ app.post('/api/v1/movies', (req, res) => {
       },
     });
   });
-});
+};
 
-// Patch - api/v1/movies/:id
-app.patch('/api/v1/movies/:id', (req, res) => {
+const updateMovie = (req, res) => {
   const id = +req.params.id;
   const movie = movies.find((movie) => movie.id === id);
   if (!movie) {
@@ -89,10 +84,9 @@ app.patch('/api/v1/movies/:id', (req, res) => {
       },
     });
   });
-});
+};
 
-// Delete - api/v1/movies/:id
-app.delete('/api/v1/movies/:id', (req, res) => {
+const deleteMovie = (req, res) => {
   // Getting id from the URL
   const id = +req.params.id;
   // Finding index to be deleted
@@ -115,4 +109,26 @@ app.delete('/api/v1/movies/:id', (req, res) => {
       data: null,
     });
   });
-});
+};
+
+// // GET - api/v1/movies
+// app.get('/api/v1/movies', getMovies);
+
+// // GET - api/v1/movies/id
+// app.get('/api/v1/movies/:id', getMovie);
+
+// // POST - api/v1/movies
+// app.post('/api/v1/movies', createMovie);
+
+// // Patch - api/v1/movies/:id
+// app.patch('/api/v1/movies/:id', updateMovie);
+
+// // Delete - api/v1/movies/:id
+// app.delete('/api/v1/movies/:id', deleteMovie);
+
+app.route('/api/v1/movies').get(getMovies).post(createMovie);
+app
+  .route('/api/v1/movies/:id')
+  .get(getMovie)
+  .patch(updateMovie)
+  .delete(deleteMovie);
