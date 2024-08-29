@@ -24,25 +24,24 @@ app.get('/api/v1/movies', (req, res) => {
 // GET - api/v1/movies/id
 app.get('/api/v1/movies/:id', (req, res) => {
   const id = +req.params.id;
-  
+
   const movie = movies.find((movie) => movie.id === id);
   console.log(movie);
-  
+
   if (!movie) {
     return res.status(404).json({
       status: 'failed',
-      message: 'Movie not found'
-    })
+      message: 'Movie not found',
+    });
   }
 
   res.status(200).json({
     status: 'success',
     data: {
-      movie: movie
-    }
-  })
-
-})
+      movie: movie,
+    },
+  });
+});
 
 // POST - api/v1/movies
 app.post('/api/v1/movies', (req, res) => {
@@ -67,28 +66,53 @@ app.patch('/api/v1/movies/:id', (req, res) => {
   if (!movie) {
     return res.status(404).json({
       status: 'failed',
-      message: 'Movie not found'
-    })
+      message: 'Movie not found',
+    });
   }
 
   const movieIndex = movies.findIndex((movie) => movie.id === id);
 
-  let updatedMovie = {...movies[movieIndex], ...req.body}
+  let updatedMovie = { ...movies[movieIndex], ...req.body };
   movies[movieIndex] = updatedMovie;
 
   fs.writeFile('./data/movies.json', JSON.stringify(movies), (err) => {
-    if(err){
+    if (err) {
       return res.status(400).json({
         status: 'failed',
-        message: 'something went wrong'
-      })
+        message: 'something went wrong',
+      });
     }
     res.status(200).json({
       status: 'success',
       data: {
-        movie: updatedMovie
-      }
-    })
-  })
+        movie: updatedMovie,
+      },
+    });
+  });
+});
 
-})
+// Delete - api/v1/movies/:id
+app.delete('/api/v1/movies/:id', (req, res) => {
+  // Getting id from the URL
+  const id = +req.params.id;
+  // Finding index to be deleted
+  const movieIndex = movies.findIndex((movie) => movie.id === id);
+
+  // Remove the movie from the array
+  movies.splice(movieIndex, 1); // Remove the movie from specified index
+
+  // Writing the updated json to the file
+  fs.writeFile('./data/movies.json', JSON.stringify(movies), (err) => {
+    if (err) {
+      return res.status(400).json({
+        status: 'failed',
+        message: 'something went wrong',
+      });
+    }
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  });
+});
