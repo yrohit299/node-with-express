@@ -1,10 +1,17 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const morgan = require('morgan');
 
 let movies = JSON.parse(fs.readFileSync('./data/movies.json'));
 
 app.use(express.json()); //Middleware
+app.use(morgan('dev'));
+app.use((req, res, next) => {
+  console.log('middleware called');
+  req.updatedAt = new Date().toISOString();
+  next();
+})
 
 const port = 3000;
 app.listen(port, () => {
@@ -14,6 +21,7 @@ app.listen(port, () => {
 const getMovies = (req, res) => {
   res.status(200).json({
     status: 'success',
+    updatedAt: req.updatedAt,
     data: {
       movies: movies,
     },
@@ -23,7 +31,6 @@ const getMovies = (req, res) => {
 const getMovie = (req, res) => {
   const id = +req.params.id;
   const movie = movies.find((movie) => movie.id === id);
-  console.log(movie);
 
   if (!movie) {
     return res.status(404).json({
@@ -125,10 +132,12 @@ const deleteMovie = (req, res) => {
 
 // // Delete - api/v1/movies/:id
 // app.delete('/api/v1/movies/:id', deleteMovie);
+let movieRouter = express.Router();
+app.use('/api/v1/movies', movieRouter)
 
-app.route('/api/v1/movies').get(getMovies).post(createMovie);
-app
-  .route('/api/v1/movies/:id')
+movieRouter.route('/').get(getMovies).post(createMovie);
+movieRouter
+  .route('/:id')
   .get(getMovie)
   .patch(updateMovie)
   .delete(deleteMovie);
