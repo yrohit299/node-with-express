@@ -7,7 +7,10 @@ const app = express();
 //Middleware
 app.use(express.json());
 app.use(express.static('./public'))
-app.use(morgan('dev'));
+if(process.env.NODE_ENV === 'development'){
+  app.use(morgan('dev'));
+}
+
 app.use((req, res, next) => {
   console.log('middleware called');
   req.updatedAt = new Date().toISOString();
