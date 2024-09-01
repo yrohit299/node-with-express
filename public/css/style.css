@@ -1,0 +1,19 @@
+body {
+  font-family: 'Sans-sarif';
+  height: 100vh;
+}
+
+.container {
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  position: absolute;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+p {
+  font-size: 18px;
+}

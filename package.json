@@ -4,6 +4,7 @@
   "description": "A simple nodejs with express framework",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon server.js",
     "test": "test"
   },
   "keywords": [
